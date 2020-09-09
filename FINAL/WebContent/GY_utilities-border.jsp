@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title> 귀영 css </title>
+  <title> 귀영 css-1 </title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -18,23 +18,51 @@
 
   <!-- Custom styles for this template-->
   <link href="asset/css/sb-admin-2.min.css" rel="stylesheet">
-  
-  <!-- datepicker -->
-  <link href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" />
 
+  <!-- 제이쿼리 -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  
 </head>
 
 <style type="text/css">
-img.ui-datepicker-trigger {
-	margin-left:5px; vertical-align:middle; cursor:pointer;
+.contentTopArea {
+	/* 	width: 300px;
+	height: 60px;
+	border: 1px solid gray;
+	margin-left: 15px;
+	padding: 15px; */
+	align-items: center;
+	float: left;
+	width: 43%;
+	height: 40px;
+	background-color: #f8f9fc;
+	margin-top: -1.5rem;
 }
 
+.container-fluid {
+	/* 	background-color:#dddfeb; */
+	background-color: #f8f9fc;
+	border-top: 1px solid #dddfeb;
+	height: 1000px;
+}
+
+.card-body-container {
+	display: inline-flex;
+	flex-flow: row wrap;
+}
 
 .border-bottom-primary {
 	border-top: 2.5rem solid #4e73df !important;
 	width: 280px;
 	height: 140px;
+	margin-top: 5px;
+	margin-left: 15px;
+	margin-right: 20px;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-content: space-around;
 }
+
 
 .modal-header {
 	border-bottom: 1px solid #ffffff;
@@ -84,27 +112,46 @@ img.ui-datepicker-trigger {
 	outline: 1.5px solid #4e73df;
 }
 
-
-.memList{
+.memList {
 	margin-top: 10px;
 	margin-left: 15px;
 	font-size: 12px;
 }
-
 </style>
 
 <script type="text/javascript">
-$(document).ready(function(){
-/* 모달창 실행 ??? */
+$(function() {
+    
+    $("#modalSubmit").submit(function(){
+        var startDate = $('#pjtStartDate').val();
+        var endDate = $('#pjtEndDate').val();
+        //-을 구분자로 연,월,일로 잘라내어 배열로 반환
+        var startArray = startDate.split('-');
+        var endArray = endDate.split('-');   
+        //배열에 담겨있는 연,월,일을 사용해서 Date 객체 생성
+        var start_date = new Date(startArray[0], startArray[1], startArray[2]);
+        var end_date = new Date(endArray[0], endArray[1], endArray[2]);
+             //날짜를 숫자형태의 날짜 정보로 변환하여 비교한다.
+        if(start_date.getTime() >= end_date.getTime()) {
+            alert("종료일은 시작일 이후 날짜여야 합니다.");
+            $("#pjtEndDate").focus();
+            return false;
+        }
+     });
+
+
     $("#myBtn").click(function(){
         $("#myModal").modal();
     });
+
 });
+
 
 
 function radioBtnSelect(val) {
 /* div 태그로 라디오버튼 체크하기 */
 	var value = val;
+	console.log(value);
 	
 	if(value == "public") {
 		$("#private").removeAttr("checked");
@@ -121,15 +168,25 @@ function radioBtnSelect(val) {
 	}
 }
 
-
 function selectMember() {
 /* select태그 선택멤버 가져오기 */
 	var select = document.getElementById("selMember");
 	var memberName = select.options[select.selectedIndex].value;
 	
-	$(".memList").append(memberName+"  ");
+	var user = "<span style='width:40px;'>"+memberName
+			+" <i class='fas fa-times' style='font-size:10px; cursor:pointer;' onclick='userDel(\""+memberName+"\");'></i>　</span>";
+	
+	if(memberName!="멤버리스트") {
+		$(".memList").append(user);
+	}
 }
 
+function userDel(memberName) {
+	var delUser = memberName;
+	alert(delUser);
+	
+	// span태그 id에 사원번호 가져와서 해당하는 아이디의 span태그 삭제하기
+}
 
 function modalReset() {
 	/* 모달창 초기화  */
@@ -142,56 +199,9 @@ function modalReset() {
 		$(".memList").html("");
 	});
 
+	/* 프로젝트 기간 - 시작일 설정(오늘 날짜) */
 	document.getElementById('pjtStartDate').value = new Date().toISOString().substring(0, 10);
 }
-	
-</script>
-
-
-
-<!-- datepicker 한국어로 -->
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/datepicker-ko.js"></script>
-
-<script type="text/javascript">
-$(function() {
-    //datepicker 한국어로 사용하기 위한 언어설정
-    $.datepicker.setDefaults($.datepicker.regional['ko']); 
-    
-    // 시작일(pjtStartDate)은 종료일(pjtEndDate) 이후 날짜 선택 불가
-    // 종료일(pjtEndDate)은 시작일(pjtStartDate) 이전 날짜 선택 불가
-
-    //시작일.
-    $('#pjtStartDate').datepicker({
-        showOn: "both",                     // 달력을 표시할 타이밍 (both: focus or button)
-        buttonImage: "images/calendar.gif", // 버튼 이미지
-        buttonImageOnly : true,             // 버튼 이미지만 표시할지 여부
-        buttonText: "날짜선택",             // 버튼의 대체 텍스트
-        dateFormat: "yy-mm-dd",             // 날짜의 형식
-        changeMonth: true,                  // 월을 이동하기 위한 선택상자 표시여부
-        //minDate: 0,                       // 선택할수있는 최소날짜, ( 0 : 오늘 이전 날짜 선택 불가)
-        onClose: function( selectedDate ) {    
-            // 시작일(pjtStartDate) datepicker가 닫힐때
-            // 종료일(pjtEndDate)의 선택할수있는 최소 날짜(minDate)를 선택한 시작일로 지정
-            $("#pjtEndDate").datepicker( "option", "minDate", selectedDate );
-        }                
-    });
-
-    //종료일
-    $('#pjtEndDate').datepicker({
-        showOn: "both", 
-        buttonImage: "images/calendar.gif", 
-        buttonImageOnly : true,
-        buttonText: "날짜선택",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        //minDate: 0, // 오늘 이전 날짜 선택 불가
-        onClose: function( selectedDate ) {
-            // 종료일(pjtEndDate) datepicker가 닫힐때
-            // 시작일(pjtStartDate)의 선택할수있는 최대 날짜(maxDate)를 선택한 종료일로 지정 
-            $("#pjtStartDate").datepicker( "option", "maxDate", selectedDate );
-        }
-    });
-});
 </script>
 
 
@@ -504,72 +514,89 @@ $(function() {
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <div class="container-fluid">
-
-          <!-- Page Heading -->
-          <h1 class="h3 mb-1 text-gray-800">Border Utilities</h1>
-          <p class="mb-4">Bootstrap's default utility classes can be found on the official <a href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities below were created to extend this theme past the default utility classes built into Bootstrap's framework.</p>
+          <div class="contentTopArea" style="width:35%;">
+          	<h1 class="h6 mb-1 text-gray-900" style="padding-top:16px; padding-left:35px; font-weight:bold; font-size:20px;">
+          		<i class="fas fa-list"></i>&nbsp;&nbsp;프로젝트명 가져오기</h1>
+          </div>
+          <div class="contentTopArea" style="width:35%;">
+          	<ul class="h6 mb-1 text-gray-800" style="padding-top:20px; font-weight:bold; font-size:13px;">
+	          	<li style="float:left; margin-left:90px;"><a href="#"><i class="fas fa-clipboard-list"></i>&nbsp;보드</a></li>
+	          	<li style="float:left; margin-left:60px;"><a href="#"><i class="fas fa-paperclip"></i>&nbsp;파일업로드</a></li>
+          	</ul>
+          </div>
+          <div class="contentTopArea" style="width:30%;">
+          	<h1 class="h6 mb-1 text-gray-800" style="padding-top:19px; padding-right:35px; font-weight:bold; text-align:right;">프로젝트 대화?</h1>
+          </div>
+          <br><br><br>
+        
+        <div class="container-fluid" style="margin-top:-2.5rem;">
+        <br>
 
           <!-- Content Row -->
           <div class="row">
 
-            <!-- Border Left Utilities -->
-            <div class="col-lg-6">
-
-              <div class="card mb-4 py-3 border-left-primary">
-                <div class="card-body">
-                  	.border-left-primary
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-secondary">
-                <div class="card-body">
-                  .border-left-secondary
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-success">
-                <div class="card-body">
-                  .border-left-success
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-info">
-                <div class="card-body">
-                  .border-left-info
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-warning">
-                <div class="card-body">
-                  .border-left-warning
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-danger">
-                <div class="card-body">
-                  .border-left-danger
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-left-dark">
-                <div class="card-body">
-                  .border-left-dark
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Border Bottom Utilities -->
-            <div class="col-lg-6">
-
+			<div class="card-body-container">
               <div class="card mb-4 py-3 border-bottom-primary">
                 <div class="card-body">
                 	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                		<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트
-                  	</a>
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
                 </div>
               </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              
+              
+              
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+              <div class="card mb-4 py-3 border-bottom-primary">
+                <div class="card-body">
+                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
+                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
+                </div>
+              </div>
+              
+            </div>
               
             <!-- --------------------------------- 모달창 --------------------------------- -->
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -580,22 +607,23 @@ $(function() {
 			        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 			      </div>
-			     <form action="GY_main.jsp" method="post">
+			     <form action="GY_utilities-border2.jsp" method="post" id="modalSubmit">
+			     <!-- 서브밋 = GY_utilities-border2.jsp로 페이지 전환 / 컨트롤러로 데이터 전달-->
 				      <div class="modal-body">
 				        	<h6 style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">제목</h6>
 				        	<input type="text" name="pjtName" id="pjtName" placeholder="예) 파이널 프로젝트"
-				        		style="font-size:12px; width:430px; height:30px; margin-left:15px;" required><br><br>
+				        		style="font-size:12px; width:430px; height:30px; margin-left:15px; padding:5px;" required><br><br>
 				        		
 				        	<h6 style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">설명(선택사항)</h6>
 				        	<input type="text" name="pjtInfo" id="pjtInfo"
-				        		style="font-size:12px; width:430px; height:30px; margin-left:15px;"><br><br>
+				        		style="font-size:12px; width:430px; height:30px; margin-left:15px; padding:5px;"><br><br>
 				        		
 				        	<h6 style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">공개범위</h6>
 				        	<div class="radioBtn" onclick="radioBtnSelect(public.value);">
-				        		<input type="radio" value="public" name="scope" id="public"><label for="public" style="margin-bottom:0rem;" required >&nbsp;&nbsp;전체공개</label>
+				        		<input type="radio" value="public" name="scope" id="public"><label for="public" style="margin-bottom:0rem;">&nbsp;&nbsp;전체공개</label>
 				        	</div> 
 				        	<div class="radioBtn" onclick="radioBtnSelect(private.value);">
-				        		<input type="radio" value="private" name="scope" id="private"><label for="private" style="margin-bottom:0rem;" >&nbsp;&nbsp;멤버공개</label>
+				        		<input type="radio" value="private" name="scope" id="private"><label for="private" style="margin-bottom:0rem;">&nbsp;&nbsp;멤버공개</label>
 				        	</div>
 				        	<br><br><br><br>
 				        	
@@ -607,17 +635,16 @@ $(function() {
 				        	https://okky.kr/article/200742
 				        	-->
 				       		<select id="selMember" name="selMember" style="font-size:12px; width: 100px; height:25px; margin-left:15px; margin-top:5px;" onchange="selectMember();" required>
-				       			<option disabled selected>멤버리스트</option>
+				       			<option selected>멤버리스트</option>
 				       			<option value="홍길동">홍길동</option>
 				       			<option>이순신</option>
 				       			<option>유관순</option>
-				       			<option>등</option>
 				       		</select>
+
+ 				       		<input type="date" name="pjtStartDate" id="pjtStartDate" style="font-size:12px; width:125px; height:25px; margin-left:55px;">
+ 				       		~ 
+ 				       		<input type="date" name="pjtEndDate" id="pjtEndDate" style="font-size:12px; width:125px; height:25px;">
 				       		
-				       		<input type="text" id="pjtStartDate" name="pjtStartDate" style="font-size:12px; width:125px; height:25px; margin-left:55px;">
-				       		  ~  <input type="text" id="pjtEndDate" name="pjtEndDate" style="font-size:12px; width:125px; height:25px;">
-				       		
-<!-- 				       		<i class="fas fa-caret-right" style="font-size:20px; margin-left:100px;"></i> -->
 				       		<div class="memList">
 				       		
 				       		</div>
@@ -633,44 +660,6 @@ $(function() {
 			  </div>
 			</div>
             <!-- --------------------------------- 모달창 띄우기 --------------------------------- --> 
-              
-              <div class="card mb-4 py-3 border-bottom-secondary">
-                <div class="card-body">
-                  .border-bottom-secondary
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-bottom-success">
-                <div class="card-body">
-                  .border-bottom-success
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-bottom-info">
-                <div class="card-body">
-                  .border-bottom-info
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-bottom-warning">
-                <div class="card-body">
-                  .border-bottom-warning
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-bottom-danger">
-                <div class="card-body">
-                  .border-bottom-danger
-                </div>
-              </div>
-
-              <div class="card mb-4 py-3 border-bottom-dark">
-                <div class="card-body">
-                  .border-bottom-dark
-                </div>
-              </div>
-
-            </div>
 
           </div>
 
