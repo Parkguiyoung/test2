@@ -151,12 +151,12 @@ $(function(){
         </div>        
 		*/
 		var addTag = "<form action='' method='' onsubmit='tasklistSubmit();'>"
-					+"<div id='' style='background-color:#eaecf4; width:290px; height:45px; padding-top:11px; "
-						+"padding-left:15px; font-size:13px; margin-left:10px; margin-right:18px;'>"
-	     			+"<input type='text' name='addedtask' id='addedtask' style='width:240px; height:23px; font-size:13px; "
-	  					+"border-radius:3px 3px 3px 3px; margin-right:11px; border:0; outline:none;' required>"
-	  				+"<i class='fas fa-times' style='color:#6e707e; font-size:14px; cursor:pointer' id='tasklistRemove'></i>"
-	  				+"</div>"
+						+"<div id='' style='background-color:#eaecf4; width:290px; height:45px; padding-top:11px; "
+								+"padding-left:15px; font-size:13px; margin-left:10px; margin-right:18px;'>"
+		     				+"<input type='text' name='addedtask' id='addedtask' style='width:240px; height:23px; font-size:13px; "
+		  						+"border-radius:3px 3px 3px 3px; margin-right:11px; border:0; outline:none;' required>"
+		  					+"<i class='fas fa-times' style='color:#6e707e; font-size:14px; cursor:pointer' id='tasklistRemove'></i>"
+		  				+"</div>"
 	  				+"</form>"
 		
   		$(".contentrowDiv:eq(1)").append(addTag);
@@ -171,19 +171,18 @@ $(function(){
 
 function tasklistSubmit() {
 	/* todo리스트 입력시 텍스트 받아오기 및 체크리스트로 전환 >>>>>>>>>>>>>>>>> ajax */
-	
 	var value = $("#addedtask").val();
 	
 	if(value!=null || value!="") {
 		var addTag = "<form action='' method='' onsubmit='tasklistSubmit();'>"
-			+"<div id='' style='background-color:#eaecf4; width:290px; height:45px; padding-top:11px; "
-				+"padding-left:15px; font-size:13px; margin-left:10px; margin-right:18px;'>"
-				+"<input type='checkbox' style='margin-right:15px;'>"
-				+"<input type='text' name='addedtask' id='addedtask' style='width:210px; height:23px; font-size:13px; "
-					+"border-radius:3px 3px 3px 3px; margin-right:11px; border:0; outline:none;' required>"
-				+"<i class='fas fa-times' style='color:#6e707e; font-size:14px; cursor:pointer' id='tasklistRemove'></i>"
-				+"</div>"
-				+"</form>"
+						+"<div id='' style='background-color:#eaecf4; width:290px; height:45px; padding-top:11px; "
+								+"padding-left:15px; font-size:13px; margin-left:10px; margin-right:18px;'>"
+							+"<input type='checkbox' style='margin-right:15px;'>"
+							+"<input type='text' name='addedtask' id='addedtask' style='width:210px; height:23px; font-size:13px; "
+								+"border-radius:3px 3px 3px 3px; margin-right:11px; border:0; outline:none;' required>"
+							+"<i class='fas fa-times' style='color:#6e707e; font-size:14px; cursor:pointer' id='tasklistRemove'></i>"
+						+"</div>"
+					+"</form>"
 		$(".contentrowDiv:eq(1)").append(addTag);
 	}
 }

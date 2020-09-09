@@ -36,7 +36,20 @@
 	width: 43%;
 	height: 40px;
 	background-color: #f8f9fc;
-	margin-top: -1.5rem;
+	margin-top: -1.4rem;
+}
+
+.contentTopArea ul {
+	list-style-type: none;
+}
+
+.contentTopArea ul li a {
+	text-decoration: none;
+	color: black;
+}
+
+.contentTopArea ul li a:hover {
+	color: #4e73df;
 }
 
 .container-fluid {
@@ -63,6 +76,14 @@
 	align-content: space-around;
 }
 
+.card-body-2 {
+	flex: 1 1 auto;
+	min-height: 1px;
+	padding-left: 1.25rem;
+	padding-right: 1rem;
+	padding-top: 0;
+	padding-bottom: 1.25rem;
+}
 
 .modal-header {
 	border-bottom: 1px solid #ffffff;
@@ -117,12 +138,13 @@
 	margin-left: 15px;
 	font-size: 12px;
 }
+
 </style>
 
 <script type="text/javascript">
 $(function() {
-    
     $("#modalSubmit").submit(function(){
+    	/* 프로젝트 기간 제한설정 */
         var startDate = $('#pjtStartDate').val();
         var endDate = $('#pjtEndDate').val();
         //-을 구분자로 연,월,일로 잘라내어 배열로 반환
@@ -137,15 +159,61 @@ $(function() {
             $("#pjtEndDate").focus();
             return false;
         }
-     });
+    });
+             
+     /* 모달 submit시 프로젝트 영역 생성 */
+      /*
+      <div class="card mb-4 py-3 border-bottom-primary" id="newpjt">
+         <div class="card-body-2">
+         	<a style="display:inline-block; color:#828181; width:245px; height:15px; text-align:right; vertical-align:top;">
+         	<sup><i data-toggle="modal" href="#myModal" id="config" class="fas fa-cog" style="font-size:12px; cursor:pointer;" onclick=""></i></sup></a>
+         	<!-- 톱니바퀴 클릭시 모달에 입력했던 정보 불러오기 -->
+         	<a href="업무리스트 생성 페이지로 이동" style="text-decoration:none; color:#828181; display:inline-block; margin-top:-10px;">
+         	<i class="fas fa-check"></i>&nbsp;프로젝트명</a>
+         </div>
+       </div>
+	 */
 
+    $("#submitBtn").click(function(){
+    	var pjtName = $("#pjtName").val();
+    	var pjtEndDate = $("#pjtEndDate").val();
+    	
+    	if(pjtName==null || pjtName=="") {
+    		alert("프로젝트 제목은 필수 입력사항입니다.");
+    	} else if(!$(':input:radio[name=scope]:checked').val()) {
+    		alert("공개범위는 필수 선택사항입니다.");
+    	} else if(pjtEndDate==null || pjtEndDate=="") {
+    		alert("프로젝트 기간은 필수 선택사항입니다.");
+ 	    } 
+
+   		/* 톱니바퀴(id='config') 클릭시 모달에 입력했던 정보 불러오기 */
+   		/* x(id='pjtdel') 클릭시 부모요소 가져와서 div삭제 및 db에서 delete */
+       	var addTag = "<div class='card mb-4 py-3 border-bottom-primary' id='' onmouseover='confighover();' onmouseout='confighoverCan();'>"
+       					+"<div class='card-body-2'>"
+       		       			+"<a style='display:inline-block; color:#828181; width:245px; height:15px; text-align:right; vertical-align:top;'>"
+       		     				+"<sup><i data-toggle='modal' href='#myModal' id='config' class='fas fa-cog' style='font-size:12px; cursor:pointer;' onclick=''></i>"
+       		     				+"&nbsp;&nbsp;<i class='fas fa-times' id='pjtdel' style='font-size:13px; cursor:pointer;' onclick=''></i></sup></a>"
+       		     			+"<a href='업무리스트 생성 페이지로 이동' style='text-decoration:none; color:#828181; display:inline-block; margin-top:-10px;'>"
+       		     				+"<i class='fas fa-check'></i>&nbsp;프로젝트명</a>"
+       		     		+"</div>"
+       		   		+"</div>";
+                  
+       	$(".card-body-container").append(addTag);
+    });
 
     $("#myBtn").click(function(){
         $("#myModal").modal();
     });
-
 });
 
+/* 톱니바퀴 숨김/보임
+function confighover() {
+	$("#config").css({"display":"block"});
+}
+function confighoverCan() {
+	$("#config").css({"display":"none"});
+}
+*/
 
 
 function radioBtnSelect(val) {
@@ -171,7 +239,10 @@ function radioBtnSelect(val) {
 function selectMember() {
 /* select태그 선택멤버 가져오기 */
 	var select = document.getElementById("selMember");
-	var memberName = select.options[select.selectedIndex].value;
+	var memberName = select.options[select.selectedIndex].text;
+	
+	//var memberName = select.options[select.selectedIndex].value;
+	// value값이 없으면 옵션 텍스트값 가져옴
 	
 	var user = "<span style='width:40px;'>"+memberName
 			+" <i class='fas fa-times' style='font-size:10px; cursor:pointer;' onclick='userDel(\""+memberName+"\");'></i>　</span>";
@@ -184,8 +255,7 @@ function selectMember() {
 function userDel(memberName) {
 	var delUser = memberName;
 	alert(delUser);
-	
-	// span태그 id에 사원번호 가져와서 해당하는 아이디의 span태그 삭제하기
+	// select option value에 사원번호 담고 span태그 id에 사원번호 가져와서 x클릭시 해당하는 아이디의 span태그 삭제하기
 }
 
 function modalReset() {
@@ -516,16 +586,16 @@ function modalReset() {
         <!-- Begin Page Content -->
           <div class="contentTopArea" style="width:35%;">
           	<h1 class="h6 mb-1 text-gray-900" style="padding-top:16px; padding-left:35px; font-weight:bold; font-size:20px;">
-          		<i class="fas fa-list"></i>&nbsp;&nbsp;프로젝트명 가져오기</h1>
+          		<i class="fas fa-list"></i>&nbsp;&nbsp;삽입내용 미정</h1>
           </div>
           <div class="contentTopArea" style="width:35%;">
           	<ul class="h6 mb-1 text-gray-800" style="padding-top:20px; font-weight:bold; font-size:13px;">
-	          	<li style="float:left; margin-left:90px;"><a href="#"><i class="fas fa-clipboard-list"></i>&nbsp;보드</a></li>
-	          	<li style="float:left; margin-left:60px;"><a href="#"><i class="fas fa-paperclip"></i>&nbsp;파일업로드</a></li>
+	          	<li style="float:left; margin-left:90px;"><a href="#"><i class="fas fa-clipboard-list"></i>&nbsp;미정</a></li>
+	          	<li style="float:left; margin-left:60px;"><a href="#"><i class="fas fa-paperclip"></i>&nbsp;미정</a></li>
           	</ul>
           </div>
           <div class="contentTopArea" style="width:30%;">
-          	<h1 class="h6 mb-1 text-gray-800" style="padding-top:19px; padding-right:35px; font-weight:bold; text-align:right;">프로젝트 대화?</h1>
+          	<h1 class="h6 mb-1 text-gray-800" style="padding-top:19px; padding-right:35px; font-weight:bold; text-align:right;">미정</h1>
           </div>
           <br><br><br>
         
@@ -536,59 +606,6 @@ function modalReset() {
           <div class="row">
 
 			<div class="card-body-container">
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              
-              
-              
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
-              <div class="card mb-4 py-3 border-bottom-primary">
-                <div class="card-body">
-                	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
-                	<i class="fas fa-plus" style="font-size:20px;"></i>&nbsp;새 프로젝트</a>
-                </div>
-              </div>
-              
               <div class="card mb-4 py-3 border-bottom-primary">
                 <div class="card-body">
                 	<a data-toggle="modal" href="#myModal" id="myBtn" style="text-decoration:none; color:#828181;" onclick="modalReset();">
@@ -607,8 +624,8 @@ function modalReset() {
 			        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 			      </div>
-			     <form action="GY_utilities-border2.jsp" method="post" id="modalSubmit">
-			     <!-- 서브밋 = GY_utilities-border2.jsp로 페이지 전환 / 컨트롤러로 데이터 전달-->
+			     <form action="" method="post" id="modalSubmit">
+			     <!-- 서브밋 = 컨트롤러로 데이터 전달 / 프로젝트 생성 -->
 				      <div class="modal-body">
 				        	<h6 style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">제목</h6>
 				        	<input type="text" name="pjtName" id="pjtName" placeholder="예) 파이널 프로젝트"
@@ -620,40 +637,41 @@ function modalReset() {
 				        		
 				        	<h6 style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">공개범위</h6>
 				        	<div class="radioBtn" onclick="radioBtnSelect(public.value);">
-				        		<input type="radio" value="public" name="scope" id="public"><label for="public" style="margin-bottom:0rem;">&nbsp;&nbsp;전체공개</label>
+				        		<input type="radio" value="public" name="scope" id="public" required ><label for="public" style="margin-bottom:0rem;">&nbsp;&nbsp;전체공개</label>
 				        	</div> 
 				        	<div class="radioBtn" onclick="radioBtnSelect(private.value);">
 				        		<input type="radio" value="private" name="scope" id="private"><label for="private" style="margin-bottom:0rem;">&nbsp;&nbsp;멤버공개</label>
 				        	</div>
 				        	<br><br><br><br>
 				        	
-				        	<span style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">참여멤버</span>
+				        	<span style="color:black; font-size:13px; font-weight:bold; margin-left:10px;">참여멤버(선택사항)</span>
 				        	
-				        	<span style="color:black; font-size:13px; font-weight:bold; margin-left:100px;">프로젝트 기간</span><br>
+				        	<span style="color:black; font-size:13px; font-weight:bold; margin-left:40px;">프로젝트 기간</span><br>
 				        	
 				        	<!-- js18_select 
 				        	https://okky.kr/article/200742
 				        	-->
-				       		<select id="selMember" name="selMember" style="font-size:12px; width: 100px; height:25px; margin-left:15px; margin-top:5px;" onchange="selectMember();" required>
+				       		<select id="selMember" name="selMember" style="font-size:12px; width: 100px; height:25px; margin-left:15px; margin-top:5px;" onchange="selectMember();">
+				       		<!-- 전체 멤버리스트 뿌리기  -->
 				       			<option selected>멤버리스트</option>
-				       			<option value="홍길동">홍길동</option>
+				       			<option value="hong">홍길동</option>
 				       			<option>이순신</option>
 				       			<option>유관순</option>
 				       		</select>
 
  				       		<input type="date" name="pjtStartDate" id="pjtStartDate" style="font-size:12px; width:125px; height:25px; margin-left:55px;">
  				       		~ 
- 				       		<input type="date" name="pjtEndDate" id="pjtEndDate" style="font-size:12px; width:125px; height:25px;">
+ 				       		<input type="date" name="pjtEndDate" id="pjtEndDate" style="font-size:12px; width:125px; height:25px;" required>
 				       		
 				       		<div class="memList">
-				       		
+				       		<!-- 참여멤버 리스트 출력 영역 -->
 				       		</div>
 				       		
 
 				       		
 				      </div>
 				      <div class="modal-footer">
-				        <button type="submit" class="btn btn-primary" style="font-size:13px; font-weight:bold;">생성</button>
+				        <button type="submit" class="btn btn-primary" id="submitBtn" style="font-size:13px; font-weight:bold;">생성</button>
 				      </div>
 			      </form>
 			    </div>
